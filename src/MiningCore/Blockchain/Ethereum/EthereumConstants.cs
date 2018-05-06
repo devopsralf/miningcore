@@ -79,7 +79,6 @@ namespace MiningCore.Blockchain.Ethereum
         Expanse,
         Ellaism,
         CallistoTestnet,    // Callisto (CLO) v3 Testnet
-        Callisto,    // Callisto (CLO) v3 Testnet
 
         Unknown = -1,
     }

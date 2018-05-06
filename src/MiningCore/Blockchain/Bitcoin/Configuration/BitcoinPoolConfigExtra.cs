@@ -18,8 +18,6 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-using MiningCore.Configuration;
-
 namespace MiningCore.Blockchain.Bitcoin.Configuration
 {
     public class BitcoinPoolConfigExtra
@@ -34,10 +32,5 @@ namespace MiningCore.Blockchain.Bitcoin.Configuration
         /// Set to true to limit RPC commands to old Bitcoin command set
         /// </summary>
         public bool? HasLegacyDaemon { get; set; }
-
-        /// <summary>
-        /// Blocktemplate stream published via ZMQ
-        /// </summary>
-        public ZmqPubSubEndpointConfig BtStream { get; set; }
     }
 }

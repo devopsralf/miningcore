@@ -23,7 +23,6 @@ using System.Buffers;
 using System.Globalization;
 using System.Linq;
 using System.Reactive;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using AutoMapper;
@@ -32,7 +31,6 @@ using MiningCore.Blockchain.ZCash.DaemonResponses;
 using MiningCore.Configuration;
 using MiningCore.Extensions;
 using MiningCore.JsonRpc;
-using MiningCore.Messaging;
 using MiningCore.Notifications;
 using MiningCore.Persistence;
 using MiningCore.Persistence.Repositories;
@@ -53,9 +51,8 @@ namespace MiningCore.Blockchain.ZCash
             IStatsRepository statsRepo,
             IMapper mapper,
             IMasterClock clock,
-            IMessageBus messageBus,
             NotificationService notificationService) :
-            base(ctx, serializerSettings, cf, statsRepo, mapper, clock, messageBus, notificationService)
+            base(ctx, serializerSettings, cf, statsRepo, mapper, clock, notificationService)
         {
         }
 
@@ -70,11 +67,10 @@ namespace MiningCore.Blockchain.ZCash
 
         #region Overrides of BitcoinPoolBase<TJob,ZCashBlockTemplate>
 
-        /// <param name="ct"></param>
         /// <inheritdoc />
-        protected override async Task SetupJobManager(CancellationToken ct)
+        protected override async Task SetupJobManager()
         {
-            await base.SetupJobManager(ct);
+            await base.SetupJobManager();
 
             if (ZCashConstants.CoinbaseTxConfig.TryGetValue(poolConfig.Coin.Type, out var coinbaseTx))
                 coinbaseTx.TryGetValue(manager.NetworkType, out coinbaseTxConfig);

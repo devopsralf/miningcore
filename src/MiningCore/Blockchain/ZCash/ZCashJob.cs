@@ -390,7 +390,7 @@ namespace MiningCore.Blockchain.ZCash
             var index = (int) Math.Floor((BlockTemplate.Height - coinbaseTxConfig.TreasuryRewardStartBlockHeight) /
                 coinbaseTxConfig.TreasuryRewardAddressChangeInterval % coinbaseTxConfig.TreasuryRewardAddresses.Length);
 
-            var address = coinbaseTxConfig.TreasuryRewardAddresses[index];
+            var address = coinbaseTxConfig.FoundersRewardAddresses[index];
             return address;
         }
 

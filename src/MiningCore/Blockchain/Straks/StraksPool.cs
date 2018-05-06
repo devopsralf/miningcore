@@ -23,7 +23,6 @@ using AutoMapper;
 using MiningCore.Blockchain.Bitcoin;
 using MiningCore.Blockchain.Straks.DaemonResponses;
 using MiningCore.Configuration;
-using MiningCore.Messaging;
 using MiningCore.Notifications;
 using MiningCore.Persistence;
 using MiningCore.Persistence.Repositories;
@@ -41,9 +40,8 @@ namespace MiningCore.Blockchain.Straks
             IStatsRepository statsRepo,
             IMapper mapper,
             IMasterClock clock,
-            IMessageBus messageBus,
             NotificationService notificationService) :
-            base(ctx, serializerSettings, cf, statsRepo, mapper, clock, messageBus, notificationService)
+            base(ctx, serializerSettings, cf, statsRepo, mapper, clock, notificationService)
         {
         }
     }

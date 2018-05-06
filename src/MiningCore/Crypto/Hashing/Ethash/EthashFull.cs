@@ -72,15 +72,18 @@ namespace MiningCore.Crypto.Hashing.Ethash
                     caches[epoch] = result;
                 }
 
-                // If we used up the future cache, or need a refresh, regenerate
-                if (future == null || future.Epoch <= epoch)
+                else
                 {
-                    logger.Info(() => $"Pre-generating DAG for epoch {epoch + 1}");
-                    future = new Dag(epoch + 1);
+                    // If we used up the future cache, or need a refresh, regenerate
+                    if (future == null || future.Epoch <= epoch)
+                    {
+                        logger.Info(() => $"Pre-generating DAG for epoch {epoch + 1}");
+                        future = new Dag(epoch + 1);
 
-                    #pragma warning disable 4014
-                    future.GenerateAsync(dagDir, logger);
-                    #pragma warning restore 4014
+                        #pragma warning disable 4014
+                        future.GenerateAsync(dagDir, logger);
+                        #pragma warning restore 4014
+                    }
                 }
 
                 result.LastUsed = DateTime.Now;

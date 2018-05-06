@@ -19,7 +19,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using MiningCore.Blockchain;
 using MiningCore.Configuration;
@@ -41,11 +40,12 @@ namespace MiningCore.Mining
 
 	public interface IMiningPool
     {
+        IObservable<ClientShare> Shares { get; }
         PoolConfig Config { get; }
         PoolStats PoolStats { get; }
         BlockchainStats NetworkStats { get; }
         void Configure(PoolConfig poolConfig, ClusterConfig clusterConfig);
         double HashrateFromShares(double shares, double interval);
-        Task StartAsync(CancellationToken ctsToken);
+        Task StartAsync();
     }
 }

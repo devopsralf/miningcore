@@ -5,8 +5,6 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using MiningCore.Blockchain;
 using MiningCore.Configuration;
-using MiningCore.Contracts;
-using MiningCore.Messaging;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
@@ -17,16 +15,11 @@ namespace MiningCore.Mining
 {
     public class ShareRelay
     {
-        public ShareRelay(JsonSerializerSettings serializerSettings, IMessageBus messageBus)
+        public ShareRelay(JsonSerializerSettings serializerSettings)
         {
-            Contract.RequiresNonNull(serializerSettings, nameof(serializerSettings));
-            Contract.RequiresNonNull(messageBus, nameof(messageBus));
-
             this.serializerSettings = serializerSettings;
-            this.messageBus = messageBus;
         }
 
-        private readonly IMessageBus messageBus;
         private ClusterConfig clusterConfig;
         private readonly BlockingCollection<Share> queue = new BlockingCollection<Share>();
         private IDisposable queueSub;
@@ -48,11 +41,14 @@ namespace MiningCore.Mining
 
         #region API-Surface
 
+        public void AttachPool(IMiningPool pool)
+        {
+            pool.Shares.Subscribe(x => { queue.Add(x.Share); });
+        }
+
         public void Start(ClusterConfig clusterConfig)
         {
             this.clusterConfig = clusterConfig;
-
-            messageBus.Listen<ClientShare>().Subscribe(x => queue.Add(x.Share));
 
             pubSocket = new PublisherSocket();
 

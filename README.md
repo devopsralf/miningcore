@@ -1,4 +1,3 @@
-
 [![Build status](https://ci.appveyor.com/api/projects/status/nbvaa55gu3icd1q8?svg=true)](https://ci.appveyor.com/project/oliverw/miningcore)
 [![Docker Build Statu](https://img.shields.io/docker/build/coinfoundry/miningcore-docker.svg)](https://hub.docker.com/r/coinfoundry/miningcore-docker/)
 [![Docker Stars](https://img.shields.io/docker/stars/coinfoundry/miningcore-docker.svg)](https://hub.docker.com/r/coinfoundry/miningcore-docker/)
@@ -37,13 +36,13 @@ Zcash | Yes | Yes | |
 Monero | Yes | Yes | |
 Ethereum | Yes | Yes | | Requires [Parity](https://github.com/paritytech/parity/releases)
 Ethereum Classic | Yes | Yes | | Requires [Parity](https://github.com/paritytech/parity/releases)
-Expanse | Yes | Yes | | - **Not working for Byzantinium update**<br>- Requires [Parity](https://github.com/paritytech/parity/releases)
+Expanse | Yes | Yes | | **Not working for Byzantinium update** Requires [Parity](https://github.com/paritytech/parity/releases)
 DASH | Yes | Yes | |
 Bitcoin Gold | Yes | Yes | |
 Bitcoin Cash | Yes | Yes | |
 Vertcoin | Yes | Yes | |
 Monacoin | Yes | Yes | |
-Globaltoken | Yes | Yes | | Requires [GLT Daemon](https://globaltoken.org/#downloads)
+Globaltoken | Yes | Yes | | [GLT Daemon](https://globaltoken.org/#downloads)
 Ellaism | Yes | Yes | | Requires [Parity](https://github.com/paritytech/parity/releases)
 Groestlcoin | Yes | Yes | |
 Dogecoin | Yes | No | |
@@ -54,7 +53,6 @@ Peercoin | Yes | No | |
 Straks | Yes | Yes | |
 Electroneum | Yes | Yes | |
 MoonCoin | Yes | Yes | |
-
 #### Ethereum
 
 Miningcore implements the [Ethereum stratum mining protocol](https://github.com/nicehash/Specifications/blob/master/EthereumStratum_NiceHash_v1.0.0.txt) authored by NiceHash. This protocol is implemented by all major Ethereum miners.
@@ -73,15 +71,16 @@ Miningcore implements the [Ethereum stratum mining protocol](https://github.com/
 
 This software comes with a built-in donation of 0.1% per block-reward to support the ongoing development of this project. You can also send donations directly to the following accounts:
 
-* BTC:  `17QnVor1B6oK1rWnVVBrdX9gFzVkZZbhDm`
-* LTC:  `LTK6CWastkmBzGxgQhTTtCUjkjDA14kxzC`
-* DOGE: `DGDuKRhBewGP1kbUz4hszNd2p6dDzWYy9Q`
-* ETH:  `0xcb55abBfe361B12323eb952110cE33d5F28BeeE1`
-* ETC:  `0xF8cCE9CE143C68d3d4A7e6bf47006f21Cfcf93c0`
-* DASH: `XqpBAV9QCaoLnz42uF5frSSfrJTrqHoxjp`
-* ZEC:  `t1YHZHz2DGVMJiggD2P4fBQ2TAPgtLSUwZ7`
-* BTG:  `GQb77ZuMCyJGZFyxpzqNfm7GB1rQreP4n6`
-* XMR: `475YVJbPHPedudkhrcNp1wDcLMTGYusGPF5fqE7XjnragVLPdqbCHBdZg3dF4dN9hXMjjvGbykS6a77dTAQvGrpiQqHp2eH`
+* BTC:  17QnVor1B6oK1rWnVVBrdX9gFzVkZZbhDm
+* LTC:  LTK6CWastkmBzGxgQhTTtCUjkjDA14kxzC
+* DOGE: DGDuKRhBewGP1kbUz4hszNd2p6dDzWYy9Q
+* ETH:  0xcb55abBfe361B12323eb952110cE33d5F28BeeE1
+* ETC:  0xF8cCE9CE143C68d3d4A7e6bf47006f21Cfcf93c0
+* DASH: XqpBAV9QCaoLnz42uF5frSSfrJTrqHoxjp
+* ZEC:  t1YHZHz2DGVMJiggD2P4fBQ2TAPgtLSUwZ7
+* BTG:  GQb77ZuMCyJGZFyxpzqNfm7GB1rQreP4n6
+* XMR:  475YVJbPHPedudkhrcNp1wDcLMTGYusGPF5fqE7XjnragVLP
+        dqbCHBdZg3dF4dN9hXMjjvGbykS6a77dTAQvGrpiQqHp2eH
 
 ### Runtime Requirements
 
@@ -93,14 +92,11 @@ This software comes with a built-in donation of 0.1% per block-reward to support
 
 Create the database:
 
-```console
-$ createuser miningcore
-$ createdb miningcore
-$ psql (enter the password for postgres)
+```bash
+createuser miningcore
+createdb miningcore
+psql (enter the password for postgressql)
 ```
-
-Run the query after login:
-
 ```sql
 alter user miningcore with encrypted password 'some-secure-password';
 grant all privileges on database miningcore to miningcore;
@@ -108,9 +104,9 @@ grant all privileges on database miningcore to miningcore;
 
 Import the database schema:
 
-```console
-$ wget https://raw.githubusercontent.com/coinfoundry/miningcore/master/src/MiningCore/Persistence/Postgres/Scripts/createdb.sql
-$ psql -d miningcore -U miningcore -f createdb.sql
+```bash
+wget https://raw.githubusercontent.com/coinfoundry/miningcore/master/src/MiningCore/Persistence/Postgres/Scripts/createdb.sql
+psql -d miningcore -U miningcore -f createdb.sql
 ```
 
 ### [Configuration](https://github.com/coinfoundry/miningcore/wiki/Configuration)
@@ -119,9 +115,9 @@ $ psql -d miningcore -U miningcore -f createdb.sql
 
 ### Docker
 
-The official [miningcore docker image](https://hub.docker.com/r/coinfoundry/miningcore-docker/) expects a valid pool configuration file as volume argument:
+The official [miningcore docker-image](https://hub.docker.com/r/coinfoundry/miningcore-docker/) expects a valid pool configuration file as volume argument:
 
-```console
+```bash
 $ docker run -d -p 3032:3032 -v /path/to/config.json:/config.json:ro coinfoundry/miningcore-docker
 ```
 
@@ -131,35 +127,37 @@ You also need to expose all stratum ports specified in your configuration file.
 
 Install the [.Net Core 2.0 SDK](https://www.microsoft.com/net/download/core) for your platform
 
-#### Linux (Ubuntu example)
+```bash
+git clone https://github.com/coinfoundry/miningcore
+cd miningcore/src/MiningCore
+```
 
-```console
-$ apt-get update -y 
-$ apt-get -y install git cmake build-essential libssl-dev pkg-config libboost-all-dev libsodium-dev
-$ git clone https://github.com/coinfoundry/miningcore
-$ cd miningcore/src/MiningCore
-$ ./linux-build.sh
+#### Linux
+
+Install dev-dependencies (Ubuntu)
+
+```bash
+apt-get update -y && apt-get -y install git cmake build-essential libssl-dev pkg-config libboost-all-dev libsodium-dev
+```
+```bash
+./linux-build.sh
 ```
 
 #### Windows
 
-```dosbatch
-> git clone https://github.com/coinfoundry/miningcore
-> cd miningcore/src/MiningCore
-> windows-build.bat
+```bash
+windows-build.bat
 ```
 
-#### After successful build
+Now copy <code>config.json</code> to <code>../../build</code>, edit it to your liking and run:
 
-Now copy `config.json` to `../../build`, edit it to your liking and run:
-
-```
+```bash
 cd ../../build
 dotnet MiningCore.dll -c config.json
 ```
 
 ### Building from Source (Visual Studio)
 
-- Install [Visual Studio 2017](https://www.visualstudio.com/vs/) (Community Edition is sufficient) for your platform
-- Install [.Net Core 2.0 SDK](https://www.microsoft.com/net/download/core) for your platform
-- Open `MiningCore.sln` in VS 2017
+- Install Visual Studio 2017 (Community Edition is sufficient)
+- Install the [.Net Core 2.0 SDK](https://www.microsoft.com/net/download/core) for your platform
+- Open MiningCore.sln in VS 2017

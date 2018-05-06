@@ -25,7 +25,6 @@ using System.Linq;
 using System.Net;
 using System.Reactive.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using MiningCore.Blockchain.Bitcoin;
@@ -265,35 +264,31 @@ namespace MiningCore.Blockchain.Ethereum
         {
             logger.LogInvoke(LogCat);
 
-            try
+            var commands = new[]
             {
-                var commands = new[]
-                {
-                    new DaemonCmd(EC.GetPeerCount),
-                };
+                new DaemonCmd(EC.GetBlockByNumber, new[] { (object) "latest", true }),
+                new DaemonCmd(EC.GetPeerCount),
+            };
 
-                var results = await daemon.ExecuteBatchAnyAsync(commands);
+            var results = await daemon.ExecuteBatchAnyAsync(commands);
 
-                if (results.Any(x => x.Error != null))
-                {
-                    var errors = results.Where(x => x.Error != null)
-                        .ToArray();
+            if (results.Any(x => x.Error != null))
+            {
+                var errors = results.Where(x => x.Error != null)
+                    .ToArray();
 
-                    if (errors.Any())
-                        logger.Warn(() => $"[{LogCat}] Error(s) refreshing network stats: {string.Join(", ", errors.Select(y => y.Error.Message))})");
-                }
-
-                // extract results
-                var peerCount = results[0].Response.ToObject<string>().IntegralFromHex<int>();
-
-                BlockchainStats.NetworkHashrate = 0; // TODO
-                BlockchainStats.ConnectedPeers = peerCount;
+                if (errors.Any())
+                    logger.Warn(() => $"[{LogCat}] Error(s) refreshing network stats: {string.Join(", ", errors.Select(y => y.Error.Message))})");
             }
 
-            catch (Exception e)
-            {
-                logger.Error(e);
-            }
+            // extract results
+            var block = results[0].Response.ToObject<Block>();
+            var peerCount = results[1].Response.ToObject<string>().IntegralFromHex<int>();
+
+            BlockchainStats.BlockHeight = block.Height.HasValue ? (long)block.Height.Value : -1;
+            BlockchainStats.NetworkDifficulty = block.Difficulty.IntegralFromHex<ulong>();
+            BlockchainStats.NetworkHashrate = 0; // TODO
+            BlockchainStats.ConnectedPeers = peerCount;
         }
 
         private async Task<bool> SubmitBlockAsync(Share share, string fullNonceHex, string headerHash, string mixHash)
@@ -482,7 +477,7 @@ namespace MiningCore.Blockchain.Ethereum
             return response.Error == null && response.Response.IntegralFromHex<uint>() > 0;
         }
 
-        protected override async Task EnsureDaemonsSynchedAsync(CancellationToken ct)
+        protected override async Task EnsureDaemonsSynchedAsync()
         {
             var syncPendingNotificationShown = false;
 
@@ -508,11 +503,11 @@ namespace MiningCore.Blockchain.Ethereum
                 await ShowDaemonSyncProgressAsync();
 
                 // delay retry by 5s
-                await Task.Delay(5000, ct);
+                await Task.Delay(5000);
             }
         }
 
-        protected override async Task PostStartInitAsync(CancellationToken ct)
+        protected override async Task PostStartInitAsync()
         {
             var commands = new[]
             {
@@ -545,8 +540,8 @@ namespace MiningCore.Blockchain.Ethereum
             var parityChain = results[4].Response.ToObject<string>();
 
             // ensure pool owns wallet
-            //if (clusterConfig.PaymentProcessing?.Enabled == true && !accounts.Contains(poolConfig.Address) || coinbase != poolConfig.Address)
-            //    logger.ThrowLogPoolStartupException($"Daemon does not own pool-address '{poolConfig.Address}'", LogCat);
+            if (clusterConfig.PaymentProcessing?.Enabled == true && !accounts.Contains(poolConfig.Address) || coinbase != poolConfig.Address)
+                logger.ThrowLogPoolStartupException($"Daemon does not own pool-address '{poolConfig.Address}'", LogCat);
 
             EthereumUtils.DetectNetworkAndChain(netVersion, parityChain, out networkType, out chainType);
 
@@ -558,12 +553,6 @@ namespace MiningCore.Blockchain.Ethereum
             BlockchainStats.NetworkType = $"{chainType}-{networkType}";
 
             await UpdateNetworkStatsAsync();
-
-            // Periodically update network stats
-            Observable.Interval(TimeSpan.FromMinutes(10))
-                .Select(via => Observable.FromAsync(UpdateNetworkStatsAsync))
-                .Concat()
-                .Subscribe();
 
             if (poolConfig.EnableInternalStratum == true)
             {
@@ -583,7 +572,7 @@ namespace MiningCore.Blockchain.Ethereum
                     }
 
                     logger.Info(() => $"[{LogCat}] Waiting for first valid block template");
-                    await Task.Delay(TimeSpan.FromSeconds(5), ct);
+                    await Task.Delay(TimeSpan.FromSeconds(5));
                 }
 
                 SetupJobUpdates();

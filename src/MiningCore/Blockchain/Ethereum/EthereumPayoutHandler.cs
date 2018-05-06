@@ -356,7 +356,6 @@ namespace MiningCore.Blockchain.Ethereum
                     return EthereumConstants.ByzantiumBlockReward;
 
                 case ParityChainType.CallistoTestnet:
-                case ParityChainType.Callisto:
                     return CallistoConstants.BaseRewardInitial * (1.0m - CallistoConstants.TreasuryPercent);
 
                 default:
